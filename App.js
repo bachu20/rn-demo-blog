@@ -1,20 +1,68 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from "@react-navigation/native";
+import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { Ionicons } from "@expo/vector-icons";
 
-export default function App() {
+import Index from "./src/screens/Index";
+import Show from "./src/screens/Show";
+import Modify from "./src/screens/Modify";
+
+import { Provider as BlogProvider } from "./src/context/Blog";
+
+const Stack = createNativeStackNavigator();
+
+const App = () => {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen
+          name="Index"
+          component={Index}
+          options={({ navigation }) => ({
+            title: "Blog List",
+            headerRight: () => (
+              <Ionicons
+                name="ios-add-sharp"
+                size={30}
+                color="black"
+                onPress={() => navigation.navigate("Modify", { isNew: true })}
+              />
+            ),
+          })}
+        />
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+        <Stack.Screen
+          name="Show"
+          component={Show}
+          options={({ navigation, route }) => ({
+            title: "Blog List",
+            headerRight: () => (
+              <Ionicons
+                name="pencil-outline"
+                size={25}
+                color="black"
+                onPress={() =>
+                  navigation.navigate("Modify", {
+                    id: route.params.id,
+                    isNew: false,
+                  })
+                }
+              />
+            ),
+          })}
+        />
+
+        <Stack.Screen
+          name="Modify"
+          component={Modify}
+          options={{ title: "Blog List" }}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+};
+
+export default () => (
+  <BlogProvider>
+    <App />
+  </BlogProvider>
+);
